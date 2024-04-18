@@ -1,5 +1,5 @@
 # Elevator System
-This project is a elevator system simulator. It includes the following components:
+This project is an elevator system simulator. It includes the following components:
 
 - ElevatorSystem: An interface defining the main operations of the elevator system.
 - SystemOne: An implementation of the ElevatorSystem interface, managing multiple elevators and handling requests efficiently.
