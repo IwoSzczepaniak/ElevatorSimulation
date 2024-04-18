@@ -8,30 +8,27 @@ public class SystemOne implements ElevatorSystem{
     private final int highestFloor;
     private final int[] upRequests;
     private final int[] downRequests;
-    private int simStep;
+    private final int simStep;
     private boolean running;
     private final ElevatorVisualization visualization;
-    private Thread[] elevatorsThreads;
-
-
 
 
     public SystemOne(int elevatorNumber, int highestFloor, int simStep) throws Exception {
         if (elevatorNumber > 16) throw new Exception("Too big elevator number!");
-        this.elevators = new ArrayList<>();
         this.highestFloor = highestFloor;
+        this.elevators = new ArrayList<>();
         addElevatorsToList(elevatorNumber);
         this.downRequests = new int[highestFloor];
         this.upRequests = new int[highestFloor];
+        this.simStep = simStep;
         this.visualization = new ElevatorVisualization(this, highestFloor);
         this.visualization.setVisible(true);
-        this.simStep = simStep;
         this.running = true;
     }
 
-    void addElevatorsToList(int n){
+    private void addElevatorsToList(int n){
         for(int i = 0; i < n; i++) {
-            this.elevators.add(new Elevator(highestFloor));
+            elevators.add(new Elevator(highestFloor));
         }
     }
 
@@ -47,7 +44,8 @@ public class SystemOne implements ElevatorSystem{
         }
     }
 
-    public void stopRun(){
+    @Override
+    public void stopSimulation(){
         running = false;
     }
 
@@ -70,8 +68,7 @@ public class SystemOne implements ElevatorSystem{
         return res;
     }
 
-    private int findHandlingElevator(int new_floor){
-        // TODO - resolve weird
+    private int findHandlingElevator(){
         int min_load = Integer.MAX_VALUE;
         int min_i = 0;
         for(int i = 0; i < elevators.size(); i++){
@@ -87,7 +84,7 @@ public class SystemOne implements ElevatorSystem{
 
     @Override
     public void pickup(int floor, int direction) {
-        int elevatorId = findHandlingElevator(floor);
+        int elevatorId = findHandlingElevator();
 
         if (direction == 1) { // Up direction
             upRequests[floor]++;
@@ -101,10 +98,8 @@ public class SystemOne implements ElevatorSystem{
     }
 
     @Override
-    public void update(int elevatorId, int currentFloor, int targetFloor) {
-        Elevator elevator = elevators.get(elevatorId);
-//        elevator.setCurrentFloor(currentFloor);
-//        elevator.setTargetFloor(targetFloor);
+    public void update() {
+        visualization.updateElevatorStatus();
     }
 
     @Override
@@ -115,17 +110,11 @@ public class SystemOne implements ElevatorSystem{
             if (prev_floor > floor) downRequests[prev_floor] = 0;
             else if (prev_floor < floor) upRequests[prev_floor] = 0;
         }
-        show();
+        update();
     }
 
     @Override
     public List<Elevator> status() {
         return elevators;
     }
-
-    @Override
-    public void show() {
-        visualization.updateElevatorStatus();
-    }
-
 }

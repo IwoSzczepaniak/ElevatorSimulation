@@ -4,14 +4,12 @@ import java.util.List;
 
 public interface ElevatorSystem {
     void startSimulation();
+    void stopSimulation();
     void pickup(int floor, int direction);
-    void update(int elevatorId, int currentFloor, int targetFloor);
+    void update();
     void step();
     List<Elevator> status();
-    void show();
-
-    public int getUpRequests(int floor) ;
-    public int getDownRequests(int floor);
-    public int getDestRequest(int floor);
-
+    int getUpRequests(int floor) ;
+    int getDownRequests(int floor);
+    int getDestRequest(int floor);
 }

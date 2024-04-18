@@ -7,7 +7,7 @@ public class Elevator {
     private final int[] upRequest;
     private final int[] downRequest;
     private final int[] passengerRequest;
-    private final Random rand = new Random(0);
+    private final Random rand = new Random();
     private int direction;
     private int currentFloor;
 
