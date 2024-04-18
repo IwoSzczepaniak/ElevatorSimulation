@@ -7,76 +7,76 @@ public class Elevator {
     private int currentFloor;
     private int targetFloor;
     private final  int highestFloor;
-    private int[] destResquest;
-    private int[] destWaiting;
+    private int[] upRequest;
+    private int[] downRequest;
+    private int[] passengerRequest;
     private final Random rand = new Random(0);
-
-
 
     public Elevator(int highestFloor, int elevatorId, int currentFloor, int targetFloor) {
         this.elevatorId = elevatorId;
         this.currentFloor = currentFloor;
         this.targetFloor = targetFloor;
         this.highestFloor = highestFloor;
-        this.destResquest = new int[highestFloor];
+        this.upRequest = new int[highestFloor];
+        this.downRequest = new int[highestFloor];
+        this.passengerRequest = new int[highestFloor];
     }
 
-    private void searchNewTargetUp(){
+    private int searchNewTargetUp(){
         /* this shall work like LOOK algorithm */
         for (int i = highestFloor - 1; i > -1; i--) {
-            if (destResquest[i] > 0) {
-                targetFloor = i;
-                break;
+            if (upRequest[i] > 0 || passengerRequest[i] > 0) {
+                return i;
             }
         }
+        return 0;
     }
 
-    private void searchNewTargetDown(){
+    private int searchNewTargetDown(){
         /* this shall work like LOOK algorithm */
-
         for(int i = 0; i < highestFloor; i++){
-            if(destResquest[i] > 0){
-                targetFloor = i;
-                break;
+            if(downRequest[i] > 0 || passengerRequest[i] > 0){
+                return i;
             }
         }
+        return 0;
     }
 
     public int move(){
         int priorFloor = currentFloor;
         if(currentFloor < targetFloor){
             currentFloor++;
-            if(currentFloor == targetFloor || currentFloor == highestFloor){
-                searchNewTargetDown();
+            if(currentFloor == targetFloor || currentFloor == highestFloor - 1){
+                int newTargetUp = searchNewTargetUp();
+                if (newTargetUp == targetFloor) targetFloor = searchNewTargetDown();
+                else targetFloor = newTargetUp;
             }
         }
         else if (currentFloor > targetFloor){
             currentFloor--;
             if(currentFloor == targetFloor || currentFloor == 0){
-                searchNewTargetUp();
+                int newTargetDown = searchNewTargetDown();
+                if (newTargetDown == targetFloor) targetFloor = searchNewTargetUp();
+                else targetFloor = newTargetDown;
             }
         }
 
-        while (destResquest[currentFloor] > 0){
-            // TODO direction should not depend on the motion of the elevator but on the button
-            if (priorFloor > currentFloor) { // Up direction
-                addPassengerToDest(rand.nextInt(priorFloor+1, highestFloor)); // Random destiation
-            } else if (priorFloor < currentFloor) { // Down direction
-                addPassengerToDest(rand.nextInt(0, priorFloor)); // Random destiation
-            }
-            destResquest[currentFloor]--;
+        while (upRequest[currentFloor] > 0) { // Up direction
+            addPassenger(rand.nextInt(currentFloor, highestFloor)); // Random destiation
+            upRequest[currentFloor]--;
+        }
+        while (downRequest[currentFloor] > 0) { // Down direction
+            addPassenger(rand.nextInt(0, priorFloor)); // Random destiation
+            downRequest[currentFloor]--;
         }
 
-        destResquest[currentFloor] = 0;
-
-
-        searchNewTargetUp();
+        if (passengerRequest[currentFloor] > 0) passengerRequest[currentFloor] = 0;
 
         return currentFloor;
     }
 
     public int getDestRequestAmount(int floor){
-        return Math.abs(destResquest[floor]);
+        return passengerRequest[floor];
     }
 
     public int getCurrentFloor() {
@@ -95,18 +95,30 @@ public class Elevator {
         return targetFloor;
     }
 
-    public void addFloorToDest(int floor){
-        destResquest[floor]++;
-        if (Math.abs(currentFloor - floor) > Math.abs(currentFloor - targetFloor)){
+    private void updateTargetFloor(int floor){
+        /* this shall work like LOOK algorithm
+           it should update only if 1) going in the same direction 2) floor is further than targerFloor */
+        boolean current_dir = currentFloor >= targetFloor;
+        boolean wanna_dir = floor >= targetFloor;
+        if (current_dir == wanna_dir && Math.abs(currentFloor - floor) > Math.abs(currentFloor - targetFloor)){
             targetFloor = floor;
         }
     }
 
-    public void addPassengerToDest(int floor){
-        destResquest[floor]--;
-        if (Math.abs(currentFloor - floor) > Math.abs(currentFloor - targetFloor)){
-            targetFloor = floor;
-        }
+    public void addFloorToUp(int floor){
+        upRequest[floor]++;
+        targetFloor = searchNewTargetUp();
     }
+
+    public void addFloorToDown(int floor){
+        downRequest[floor]++;
+        targetFloor = searchNewTargetDown();
+    }
+
+    public void addPassenger(int floor){
+        passengerRequest[floor]++;
+        updateTargetFloor(floor);
+    }
+
 
 }

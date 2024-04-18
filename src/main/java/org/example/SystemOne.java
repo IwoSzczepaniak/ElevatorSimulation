@@ -83,21 +83,23 @@ public class SystemOne implements ElevatorSystem{
 
     @Override
     public void pickup(int floor, int direction) {
+        int elevatorId = findClosestElevator(floor);
+
         if (direction == 1) { // Up direction
             upRequests[floor]++;
+            elevators.get(elevatorId).addFloorToUp(floor);
+
         } else if (direction == -1) { // Down direction
             downRequests[floor]++;
+            elevators.get(elevatorId).addFloorToDown(floor);
         }
 
         // choose the closest elevator
-        int elevatorId = findClosestElevator(floor);
         // add request to the chosen elevator
-        elevators.get(elevatorId).addFloorToDest(floor);
 //        if (direction == 1) { // Up direction
 //            elevators.get(elevatorId).addFloorToDest(rand.nextInt(floor+1, highestFloor)); // Random destiation
 //        } else if (direction == -1) { // Down direction
 //            elevators.get(elevatorId).addFloorToDest(rand.nextInt(0, floor)); // Random destiation
-//
 //        }
 
 
