@@ -16,7 +16,7 @@ public class ElevatorVisualization extends JFrame {
         setTitle("Elevator System Visualization");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(800, 600);
-        setLocationRelativeTo(null); // Center the frame
+        setLocationRelativeTo(null);
         setLayout(new GridLayout(highestFloor + 2, system.status().size() * 2));
 
         initElevatorLabels();
@@ -38,7 +38,7 @@ public class ElevatorVisualization extends JFrame {
         exitButton.setForeground(Color.WHITE);
         exitButton.setMargin(new Insets(0, 0, 0, 0));
         exitButton.setFocusPainted(false);
-        exitButton.setBackground(Color.RED); // Set button background color to red
+        exitButton.setBackground(Color.RED);
 
         exitButton.addActionListener(new ActionListener() {
             @Override
@@ -71,7 +71,7 @@ public class ElevatorVisualization extends JFrame {
                 upButton.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        system.pickup(currentFloor, 1); // Move up
+                        system.pickup(currentFloor, 1);
                     }
                 });
                 add(upButton);
@@ -84,7 +84,7 @@ public class ElevatorVisualization extends JFrame {
                 downButton.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        system.pickup(currentFloor, -1); // Move down
+                        system.pickup(currentFloor, -1);
                     }
                 });
                 add(downButton);
@@ -93,12 +93,12 @@ public class ElevatorVisualization extends JFrame {
             }
 
             for (final Elevator elevator : system.status()) {
-                JLabel label = new JLabel("-"); // Square sign
+                JLabel label = new JLabel("-");
                 label.setHorizontalAlignment(SwingConstants.CENTER);
                 if (elevator.getCurrentFloor() == currentFloor) {
                     label.setText("\u25A0");
                     label.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 60));
-                    label.setForeground(Color.GRAY); // Set text color to white
+                    label.setForeground(Color.GRAY);
                     label.setOpaque(true);
                 }
                 add(label);
