@@ -3,6 +3,7 @@ package org.example;
 import java.util.List;
 
 public interface ElevatorSystem {
+    void run();
     void pickup(int floor, int direction);
     void update(int elevatorId, int currentFloor, int targetFloor);
     void step();

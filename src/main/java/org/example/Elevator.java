@@ -11,6 +11,7 @@ public class Elevator {
     private final Random rand = new Random(0);
     private int direction;
     private int currentFloor;
+    private int targetFloor;
 
 
     public Elevator(int highestFloor, int elevatorId) {
@@ -50,8 +51,8 @@ public class Elevator {
     }
 
     public int move() {
-        if(!upRequestsExist() && !downRequestsExist() && currentFloor > 0){
-            currentFloor--;
+        if(!upRequestsExist() && !downRequestsExist()){
+            if (currentFloor > 0) currentFloor--;
             return currentFloor;
         }
 
@@ -85,7 +86,7 @@ public class Elevator {
 
         else if (direction == 0){
             if(downRequestsExist() || upRequestsExist()) {
-                upFlag = true;
+                upFlag = true; // first we want to "find the request, so we go up"
                 if (upRequest[currentFloor] > 0) {
                     direction = 1;
                 } else if (downRequest[currentFloor] > 0) {

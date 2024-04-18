@@ -4,32 +4,52 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SystemOne implements ElevatorSystem{
-    private List<Elevator> elevators;
-    private final int elevatorNumber;
+    private final List<Elevator> elevators;
     private final int highestFloor;
     private final int[] upRequests;
     private final int[] downRequests;
 
-
     private final ElevatorVisualization visualization;
+    private Thread[] visualizationThread;
+    private Thread elevatorThread;
+    private int simStep;
+    private boolean running;
 
 
-    public SystemOne(int elevatorNumber, int highestFloor) throws Exception {
+
+    public SystemOne(int elevatorNumber, int highestFloor, int simStep) throws Exception {
         if (elevatorNumber > 16) throw new Exception("Too big elevator number!");
-        this.elevatorNumber = elevatorNumber - 1;
         this.elevators = new ArrayList<>();
         this.highestFloor = highestFloor;
-        addElevatorsToList(this.elevatorNumber);
+        addElevatorsToList(elevatorNumber);
         this.downRequests = new int[highestFloor];
         this.upRequests = new int[highestFloor];
-        this.visualization = new ElevatorVisualization(this, 10);
+        this.visualization = new ElevatorVisualization(this, highestFloor);
         this.visualization.setVisible(true);
+        this.simStep = simStep;
+        this.running = true;
     }
 
     void addElevatorsToList(int n){
-        for(int i = 0; i <= n; i++) {
+        for(int i = 0; i < n; i++) {
             this.elevators.add(new Elevator(highestFloor, i));
         }
+    }
+
+    @Override
+    public void run(){
+        while(running) {
+            step();
+            try {
+                Thread.sleep(simStep); // Delay for visualization
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void stopRun(){
+        running = false;
     }
 
     @Override
@@ -52,7 +72,7 @@ public class SystemOne implements ElevatorSystem{
     }
 
     private int findHandlingElevator(int new_floor){
-        // TODO - some error - it always returns 0
+        // TODO - resolve weird
         int min_load = Integer.MAX_VALUE;
         int min_i = 0;
         for(int i = 0; i < elevators.size(); i++){
@@ -96,7 +116,7 @@ public class SystemOne implements ElevatorSystem{
             if (prev_floor > floor) downRequests[prev_floor] = 0;
             else if (prev_floor < floor) upRequests[prev_floor] = 0;
         }
-        visualization.updateElevatorStatus();
+        show();
     }
 
     @Override
@@ -106,14 +126,7 @@ public class SystemOne implements ElevatorSystem{
 
     @Override
     public void show() {
-//        for(Elevator elevator : elevators){
-//            for(int i  = highestFloor-1; i > -1; i--){
-//                if (elevator.getCurrentFloor() == i) System.out.print('x');
-//                else System.out.print('-');
-//            }
-//            System.out.print('\n');
-//        }
-//        System.out.print('\n');
+        visualization.updateElevatorStatus();
     }
 
 }
