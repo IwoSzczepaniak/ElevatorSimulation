@@ -3,7 +3,6 @@ package org.example;
 import java.util.Random;
 
 public class Elevator {
-    private final int elevatorId;
     private final  int highestFloor;
     private final int[] upRequest;
     private final int[] downRequest;
@@ -11,11 +10,9 @@ public class Elevator {
     private final Random rand = new Random(0);
     private int direction;
     private int currentFloor;
-    private int targetFloor;
 
 
-    public Elevator(int highestFloor, int elevatorId) {
-        this.elevatorId = elevatorId;
+    public Elevator(int highestFloor) {
         this.highestFloor = highestFloor;
         this.upRequest = new int[highestFloor];
         this.downRequest = new int[highestFloor];
@@ -42,20 +39,15 @@ public class Elevator {
         return sum;
     }
 
-    public void addFloorToUp(int floor){
+    public synchronized void addFloorToUp(int floor){
         upRequest[floor]++;
     }
 
-    public void addFloorToDown(int floor){
+    public synchronized void addFloorToDown(int floor){
         downRequest[floor]++;
     }
 
-    public int move() {
-        if(!upRequestsExist() && !downRequestsExist()){
-            if (currentFloor > 0) currentFloor--;
-            return currentFloor;
-        }
-
+    public synchronized int move() {
         boolean upFlag = false;
         boolean downFlag = false;
         // Check if there are any requests in the current direction
@@ -85,7 +77,7 @@ public class Elevator {
         }
 
         else if (direction == 0){
-            if(downRequestsExist() || upRequestsExist()) {
+            if(upRequestsExist()) {
                 upFlag = true; // first we want to "find the request, so we go up"
                 if (upRequest[currentFloor] > 0) {
                     direction = 1;
@@ -96,19 +88,19 @@ public class Elevator {
                 }
             }
             else {
-                downFlag = true;
+                if (upRequest[currentFloor] > 0) direction = 1;
+                else direction = -1;
             }
         }
-
         if (upFlag && currentFloor < highestFloor-1) currentFloor++;
         else if(downFlag && currentFloor > 0) currentFloor--;
 
-        while(upFlag && upRequest[currentFloor] > 0){
+        while(direction == 1 && upRequest[currentFloor] > 0){
             passengerRequest[rand.nextInt(currentFloor+1, highestFloor)]++; // Random destiation
             upRequest[currentFloor]--;
         }
 
-        while(downFlag && downRequest[currentFloor] > 0){
+        while(direction == -1 && downRequest[currentFloor] > 0){
             passengerRequest[rand.nextInt(0, currentFloor)]++; // Random destiation
             downRequest[currentFloor]--;
         }

@@ -8,12 +8,11 @@ public class SystemOne implements ElevatorSystem{
     private final int highestFloor;
     private final int[] upRequests;
     private final int[] downRequests;
-
-    private final ElevatorVisualization visualization;
-    private Thread[] visualizationThread;
-    private Thread elevatorThread;
     private int simStep;
     private boolean running;
+    private final ElevatorVisualization visualization;
+    private Thread[] elevatorsThreads;
+
 
 
 
@@ -32,12 +31,12 @@ public class SystemOne implements ElevatorSystem{
 
     void addElevatorsToList(int n){
         for(int i = 0; i < n; i++) {
-            this.elevators.add(new Elevator(highestFloor, i));
+            this.elevators.add(new Elevator(highestFloor));
         }
     }
 
     @Override
-    public void run(){
+    public void startSimulation(){
         while(running) {
             step();
             try {
@@ -54,7 +53,7 @@ public class SystemOne implements ElevatorSystem{
 
     @Override
     public int getUpRequests(int floor) {
-            return upRequests[floor];
+        return upRequests[floor];
     }
 
     @Override
