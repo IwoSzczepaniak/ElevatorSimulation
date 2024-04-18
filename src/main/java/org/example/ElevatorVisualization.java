@@ -33,20 +33,7 @@ public class ElevatorVisualization extends JFrame {
             createJLabel("");
         }
 
-        JButton exitButton = new JButton("X");
-        exitButton.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 20));
-        exitButton.setForeground(Color.WHITE);
-        exitButton.setMargin(new Insets(0, 0, 0, 0));
-        exitButton.setFocusPainted(false);
-        exitButton.setBackground(Color.RED);
-
-        exitButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                system.stopSimulation();
-                dispose();
-            }
-        });
+        JButton exitButton = getExitButton();
         add(exitButton);
 
         createJLabel("UP");
@@ -105,6 +92,24 @@ public class ElevatorVisualization extends JFrame {
             }
             createJLabel(String.valueOf(system.getDestRequest(i)));
         }
+    }
+
+    private JButton getExitButton() {
+        JButton exitButton = new JButton("X");
+        exitButton.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 20));
+        exitButton.setForeground(Color.WHITE);
+        exitButton.setMargin(new Insets(0, 0, 0, 0));
+        exitButton.setFocusPainted(false);
+        exitButton.setBackground(Color.RED);
+
+        exitButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                system.stopSimulation();
+                dispose();
+            }
+        });
+        return exitButton;
     }
 
     private JButton createArrowButton(String text) {
