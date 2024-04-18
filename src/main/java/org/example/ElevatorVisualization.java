@@ -48,25 +48,35 @@ public class ElevatorVisualization extends JFrame {
             createJLabel(String.valueOf(system.getUpRequests(i)));
             createJLabel(String.valueOf(system.getDownRequests(i)));
 
-            JButton upButton = createArrowButton("^");
             final int currentFloor = i;
 
-            upButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    system.pickup(currentFloor, 1); // Move up
-                }
-            });
-            add(upButton);
+            if (i != highestFloor - 1) {
+                JButton upButton = createArrowButton("^");
+                upButton.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        system.pickup(currentFloor, 1); // Move up
+                    }
+                });
+                add(upButton);
+            }
+            else{
+                createJLabel(" ");
+            }
 
-            JButton downButton = createArrowButton("v");
-            downButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    system.pickup(currentFloor, -1); // Move down
-                }
-            });
-            add(downButton);
+            if (i != 0) {
+                JButton downButton = createArrowButton("v");
+                downButton.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        system.pickup(currentFloor, -1); // Move down
+                    }
+                });
+                add(downButton);
+            }
+            else {
+                createJLabel(" ");
+            }
 
             for (final Elevator elevator : system.status()) {
                 JLabel label = new JLabel("-");

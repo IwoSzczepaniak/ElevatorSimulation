@@ -1,0 +1,73 @@
+package org.example;
+
+import java.util.Random;
+
+public class Elevator {
+    private final int elevatorId;
+    private int currentFloor;
+    private int targetFloor;
+    private final  int highestFloor;
+    private int[] upRequest;
+    private int[] downRequest;
+    private int[] passengerRequest;
+    private final Random rand = new Random(0);
+    private int direction;
+
+    public Elevator(int highestFloor, int elevatorId) {
+        this.elevatorId = elevatorId;
+        this.highestFloor = highestFloor;
+        this.upRequest = new int[highestFloor];
+        this.downRequest = new int[highestFloor];
+        this.passengerRequest = new int[highestFloor];
+        this.direction = 0;
+        this.currentFloor = 0;
+        this.targetFloor = 0;
+    }
+
+    public int getCurrentFloor() {
+        return currentFloor;
+    }
+
+    public int getPassengersAmount(int floor){
+        return passengerRequest[floor];
+    }
+
+    public int move(){
+
+        return -1;
+    }
+
+    private int findHighest(){
+        for(int i = highestFloor - 1; i > targetFloor; i--){
+            if(upRequest[i] > 0 || passengerRequest[i] > 0){
+                return i;
+            }
+        }
+        return targetFloor;
+    }
+
+    private int findLowest(){
+        if (targetFloor-1 < 0) return targetFloor;
+
+        for(int i = targetFloor-1; i > -1; i--){
+            if(downRequest[i] > 0 || passengerRequest[i] > 0){
+                return i;
+            }
+        }
+        return targetFloor;
+    }
+
+    public void addFloorToUp(int floor){
+        upRequest[floor]++;
+        if(direction >= 0){
+            targetFloor = findHighest();
+        }
+    }
+
+    public void addFloorToDown(int floor){
+        downRequest[floor]++;
+        if (direction <= 0){
+            targetFloor = findLowest();
+        }
+    }
+}

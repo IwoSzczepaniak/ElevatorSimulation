@@ -28,7 +28,7 @@ public class SystemOne implements ElevatorSystem{
 
     void addElevatorsToList(int n){
         for(int i = 0; i <= n; i++) {
-            this.elevators.add(new Elevator(highestFloor, i, 0, 0));
+            this.elevators.add(new Elevator(highestFloor, i));
         }
     }
 
@@ -46,44 +46,29 @@ public class SystemOne implements ElevatorSystem{
     public int getDestRequest(int floor){
         int res = 0;
         for(Elevator elevator : elevators){
-            res += elevator.getDestRequestAmount(floor);
+            res += elevator.getPassengersAmount(floor);
         }
         return res;
     }
 
-    private int findClosestElevator(int new_floor){
+    private int findHandlingElevator(int new_floor){
         // TODO - some error - it always returns 0
-        /* This method is calculating the distance metrics to choose the best elevator for LOOK algorithm*/
-        int min_dist = 0;
+        int min_load = Integer.MAX_VALUE;
         int min_i = 0;
-
         for(int i = 0; i < elevators.size(); i++){
             Elevator elevator = elevators.get(i);
-            boolean current_dir = elevator.getTargetFloor() >= elevator.getCurrentFloor();
-            boolean new_dir = new_floor >= elevator.getCurrentFloor();
-            if (new_dir == current_dir){
-                int dist = Math.abs(new_floor - elevator.getCurrentFloor());
-                if (dist < min_dist) {
-                    min_dist = dist;
-                    min_i = i;
-                }
-            }
-            else{
-                int dist = 2*Math.abs(elevator.getTargetFloor() - elevator.getCurrentFloor()) + Math.abs(new_floor - elevator.getCurrentFloor());
-                if (dist < min_dist) {
-                    min_dist = dist;
-                    min_i = i;
-                }
+            int new_load = elevator.getCurrentLoad();
+            if (min_load > new_load){
+                min_load = new_load;
+                min_i = i;
             }
         }
-
-//        System.out.println(min_dist + " " + min_i);
         return min_i;
     }
 
     @Override
     public void pickup(int floor, int direction) {
-        int elevatorId = findClosestElevator(floor);
+        int elevatorId = findHandlingElevator(floor);
 
         if (direction == 1) { // Up direction
             upRequests[floor]++;
@@ -94,22 +79,13 @@ public class SystemOne implements ElevatorSystem{
             elevators.get(elevatorId).addFloorToDown(floor);
         }
 
-        // choose the closest elevator
-        // add request to the chosen elevator
-//        if (direction == 1) { // Up direction
-//            elevators.get(elevatorId).addFloorToDest(rand.nextInt(floor+1, highestFloor)); // Random destiation
-//        } else if (direction == -1) { // Down direction
-//            elevators.get(elevatorId).addFloorToDest(rand.nextInt(0, floor)); // Random destiation
-//        }
-
-
     }
 
     @Override
     public void update(int elevatorId, int currentFloor, int targetFloor) {
         Elevator elevator = elevators.get(elevatorId);
-        elevator.setCurrentFloor(currentFloor);
-        elevator.setTargetFloor(targetFloor);
+//        elevator.setCurrentFloor(currentFloor);
+//        elevator.setTargetFloor(targetFloor);
     }
 
     @Override
@@ -130,14 +106,14 @@ public class SystemOne implements ElevatorSystem{
 
     @Override
     public void show() {
-        for(Elevator elevator : elevators){
-            for(int i  = highestFloor-1; i > -1; i--){
-                if (elevator.getCurrentFloor() == i) System.out.print('x');
-                else System.out.print('-');
-            }
-            System.out.print('\n');
-        }
-        System.out.print('\n');
+//        for(Elevator elevator : elevators){
+//            for(int i  = highestFloor-1; i > -1; i--){
+//                if (elevator.getCurrentFloor() == i) System.out.print('x');
+//                else System.out.print('-');
+//            }
+//            System.out.print('\n');
+//        }
+//        System.out.print('\n');
     }
 
 }
